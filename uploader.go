@@ -36,6 +36,8 @@ func upload(c echo.Context) error {
 	}
 	files := form.File["files"]
 
+	var resp string = "<p>upload:</p>"
+
 	for _, file := range files {
 		// Source
 		src, err := file.Open()
@@ -55,10 +57,12 @@ func upload(c echo.Context) error {
 		if _, err = io.Copy(dst, src); err != nil {
 			return err
 		}
+		resp += fmt.Sprintf("<p><a href=/upload/%s target=_blank>%s</a></p>", file.Filename, file.Filename)
 
 	}
 
-	return c.HTML(http.StatusOK, fmt.Sprintf("<p>Uploaded successfully %d files with fields name=%s and email=%s.</p><p><a href=\"/\">RETURN</a></p>", len(files), name, email))
+	resp += fmt.Sprintf("<p>Uploaded successfully %d files with fields name=%s and email=%s.</p><p><a href=\"/\">RETURN</a></p>", len(files), name, email)
+	return c.HTML(http.StatusOK, resp)
 }
 
 // upload to this directory
